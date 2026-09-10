@@ -1,16 +1,30 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { PageHero } from "../components/PageHero";
-import { Photo } from "../components/Photo";
 import { OrderCta } from "../components/WhatsAppButton";
-import { menuCategories } from "../data/site";
+import { Photo } from "../components/Photo";
+import { fetchProducts } from "../lib/products";
+import { formatBD, type Product } from "../lib/supabase";
+import { productPhotosBySlug } from "../data/site";
 
 export function Menu() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchProducts().then((data) => {
+      setProducts(data);
+      setLoading(false);
+    });
+  }, []);
+
   return (
     <main id="main-content">
       <PageHero
         eyebrow="Our creations · Made fresh to order"
         title="Handcrafted favourites,"
         emphasized="one batch at a time."
-        copy="Discover our collection of artisan chocolates and comforting desserts. Selections and custom options may vary, so message us to plan your order."
+        copy="Tap any item to customize it — choose your flavor, set your quantity, and build up your order. Selections and availability may vary, so message us if you're planning something special."
         variant="brownies"
         ctaLabel="Ask what's available"
       />
@@ -19,43 +33,40 @@ export function Menu() {
         <div className="menu-note">
           <span aria-hidden="true">✦</span>
           <p>
-            Every creation is made especially for your order. Ask us on
-            WhatsApp about current availability, custom requests, and allergen
-            information.
+            Every creation is made especially for your order. Tap a dish to see
+            flavor options and pricing, or message us on WhatsApp for custom
+            requests and allergen information.
           </p>
         </div>
       </section>
 
       <section className="section-shell section-pad">
-        <div className="menu-list">
-          {menuCategories.map((category) => (
-            <article
-              className={`menu-category ${!category.image ? "no-photo" : ""}`}
-              key={category.title}
-            >
-              {category.image ? (
-                <div className="menu-category-image">
-                  <Photo variant={category.variant} image={category.image} />
-                </div>
-              ) : null}
-              <div className="menu-category-copy">
-                <span className="menu-category-number">{category.number}</span>
-                <h2>{category.title}</h2>
-                <p className="menu-category-subtitle">{category.subtitle}</p>
-                <p>{category.description}</p>
-                <ul className="detail-list">
-                  {category.details.map((detail) => (
-                    <li key={detail}>{detail}</li>
-                  ))}
-                </ul>
-                <OrderCta
-                  location={`menu-${category.number}`}
-                  label="Ask about this on WhatsApp"
-                />
-              </div>
-            </article>
-          ))}
-        </div>
+        {loading ? (
+          <p>Loading menu…</p>
+        ) : (
+          <div className="product-grid">
+            {products.map((product) => {
+              const image = productPhotosBySlug[product.slug];
+              return (
+                <Link className="product-card" to={`/menu/${product.slug}`} key={product.id}>
+                  {image ? (
+                    <Photo variant="bonbons" image={image} />
+                  ) : (
+                    <div className="product-card-noimage" aria-hidden="true" />
+                  )}
+                  <div className="product-card-copy">
+                    <span className="product-card-category">{product.category}</span>
+                    <h2>{product.name}</h2>
+                    {product.description ? <p>{product.description}</p> : null}
+                    <span className="product-card-price">
+                      From {formatBD(product.base_price_bd)} / {product.unit_label}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <section className="order-banner">
@@ -64,8 +75,8 @@ export function Menu() {
             <p className="eyebrow">Something tempting you?</p>
             <h2>Tell us what you're craving.</h2>
             <p>
-              Share the creation you have in mind, your preferred date, and the
-              quantity you need. We'll confirm what is available.
+              Build your order above, or message us directly for occasion gifts
+              and custom requests.
             </p>
           </div>
           <OrderCta location="menu-bottom" light />

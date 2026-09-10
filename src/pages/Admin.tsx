@@ -1,6 +1,16 @@
 import { useEffect, useState, type FormEvent } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { supabase, type Order } from "../lib/supabase";
+import { supabase, formatBD, type Order } from "../lib/supabase";
+
+type OrderItemRow = {
+  id: string;
+  order_id: string;
+  product_name: string;
+  quantity: number;
+  unit_price_bd: number;
+  line_total_bd: number;
+  selected_options: { group: string; label: string; price_delta_bd: number }[];
+};
 
 const ORDER_STATUSES: Order["order_status"][] = [
   "new",
@@ -90,6 +100,7 @@ function LoginForm() {
 
 function OrderDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [itemsByOrder, setItemsByOrder] = useState<Record<string, OrderItemRow[]>>({});
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | Order["order_status"]>("all");
 
@@ -100,6 +111,18 @@ function OrderDashboard() {
       .select("*")
       .order("created_at", { ascending: false });
     if (!error && data) setOrders(data as Order[]);
+
+    const { data: itemsData, error: itemsError } = await supabase
+      .from("order_items")
+      .select("*");
+    if (!itemsError && itemsData) {
+      const grouped: Record<string, OrderItemRow[]> = {};
+      for (const item of itemsData as OrderItemRow[]) {
+        grouped[item.order_id] = grouped[item.order_id] ? [...grouped[item.order_id], item] : [item];
+      }
+      setItemsByOrder(grouped);
+    }
+
     setLoading(false);
   }
 
@@ -178,10 +201,38 @@ function OrderDashboard() {
               </div>
 
               <dl className="admin-order-details">
-                <div>
-                  <dt>Items</dt>
-                  <dd>{order.items_requested}</dd>
-                </div>
+                {itemsByOrder[order.id]?.length ? (
+                  <div className="admin-order-items">
+                    <dt>Items</dt>
+                    <dd>
+                      <ul>
+                        {itemsByOrder[order.id].map((item) => (
+                          <li key={item.id}>
+                            {item.quantity}x {item.product_name}
+                            {item.selected_options?.length
+                              ? ` (${item.selected_options.map((o) => o.label).join(", ")})`
+                              : ""}{" "}
+                            — {formatBD(item.line_total_bd)}
+                          </li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </div>
+                ) : (
+                  <div>
+                    <dt>Items</dt>
+                    <dd>{order.items_requested}</dd>
+                  </div>
+                )}
+                {order.subtotal_bd != null ? (
+                  <div>
+                    <dt>Order total</dt>
+                    <dd>
+                      {formatBD(order.subtotal_bd)} + {formatBD(order.delivery_fee_bd)} delivery ={" "}
+                      <strong>{formatBD(order.total_bd ?? order.subtotal_bd)}</strong>
+                    </dd>
+                  </div>
+                ) : null}
                 {order.occasion ? (
                   <div>
                     <dt>Occasion</dt>

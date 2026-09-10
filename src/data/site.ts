@@ -171,6 +171,15 @@ export const menuCategories: Array<{
   },
 ];
 
+// Maps product slugs (from the Supabase catalog) to real photos. Any slug
+// not listed here has no photo yet — pages must render without a photo
+// slot rather than a placeholder.
+export const productPhotosBySlug: Record<string, PhotoAsset> = {
+  "handcrafted-bonbons": photoAssets.bonbons,
+  "chocolate-chunk-cookies": photoAssets.cookies,
+  "classic-tiramisu": photoAssets.tiramisu,
+};
+
 export const occasions: Array<{
   number: string;
   title: string;

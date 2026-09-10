@@ -1,6 +1,17 @@
 import { NavLink } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { navigation, whatsappUrl } from "../data/site";
+import { useCart } from "../lib/cart";
+
+function CartLink() {
+  const { itemCount } = useCart();
+  return (
+    <NavLink to="/cart" className="cart-link" aria-label={`Cart, ${itemCount} items`}>
+      <span aria-hidden="true">🛒</span>
+      {itemCount > 0 ? <span className="cart-badge">{itemCount}</span> : null}
+    </NavLink>
+  );
+}
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -55,6 +66,8 @@ export function SiteHeader() {
         >
           Order via WhatsApp <span aria-hidden="true">↗</span>
         </a>
+
+        <CartLink />
 
         <button
           className="menu-toggle"
