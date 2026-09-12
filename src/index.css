@@ -3336,3 +3336,34 @@ main {
   font-size: 0.88rem;
   margin-bottom: 0.2rem;
 }
+
+/* ============================================================
+   Added: box-size quantity presets (e.g. brownies 6/9/12)
+   ============================================================ */
+.quantity-presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.quantity-preset-chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  background: var(--paper);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.quantity-preset-chip.is-selected {
+  border-color: var(--chocolate);
+  background: var(--gold-soft);
+  font-weight: 600;
+}
+
+.quantity-preset-custom-hint {
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}

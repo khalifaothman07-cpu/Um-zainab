@@ -181,6 +181,12 @@ export const productPhotosBySlug: Record<string, PhotoAsset> = {
   "classic-tiramisu": photoAssets.tiramisu,
 };
 
+// Common box-size shortcuts shown as quick-pick buttons on the product page,
+// in addition to the free +/- stepper for custom quantities.
+export const quantityPresetsBySlug: Record<string, number[]> = {
+  "gourmet-brownies": [6, 9, 12],
+};
+
 export const occasions: Array<{
   number: string;
   title: string;

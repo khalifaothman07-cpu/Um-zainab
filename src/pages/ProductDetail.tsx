@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { fetchProductBySlug } from "../lib/products";
 import { useCart, type CartSelectedOption } from "../lib/cart";
 import { formatBD, type Product } from "../lib/supabase";
-import { productPhotosBySlug } from "../data/site";
+import { productPhotosBySlug, quantityPresetsBySlug } from "../data/site";
 import { Photo } from "../components/Photo";
 
 export function ProductDetail() {
@@ -39,6 +39,7 @@ export function ProductDetail() {
   }, [slug]);
 
   const image = product ? productPhotosBySlug[product.slug] : undefined;
+  const presets = product ? quantityPresetsBySlug[product.slug] ?? [] : [];
   const isCustomBar = product?.slug === "chocolate-bars";
 
   const selectedOptionDetails: CartSelectedOption[] = useMemo(() => {
@@ -210,6 +211,22 @@ export function ProductDetail() {
               </button>
             </div>
           </div>
+
+          {presets.length > 0 ? (
+            <div className="quantity-presets">
+              {presets.map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  className={`quantity-preset-chip ${quantity === preset ? "is-selected" : ""}`}
+                  onClick={() => setQuantity(preset)}
+                >
+                  {preset} pieces
+                </button>
+              ))}
+              <span className="quantity-preset-custom-hint">or use +/− above for a custom box size</span>
+            </div>
+          ) : null}
 
           <div className="product-detail-price-row">
             <div>
