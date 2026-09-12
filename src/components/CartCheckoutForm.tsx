@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useCart, cartLineUnitPrice, cartLineTotal } from "../lib/cart";
 import { supabase, formatBD, FREE_DELIVERY_THRESHOLD_BD, DELIVERY_FEE_BD, MINIMUM_ORDER_BD } from "../lib/supabase";
 import { whatsappUrl } from "../data/site";
+import { generateId } from "../lib/id";
 
 type CustomerDetails = {
   customer_name: string;
@@ -81,50 +82,55 @@ export function CartCheckoutForm() {
     setStatus("submitting");
     setErrorMessage(null);
 
-    const orderId = crypto.randomUUID();
+    try {
+      const orderId = generateId();
 
-    const { error: orderError } = await supabase.from("orders").insert({
-      id: orderId,
-      customer_name: details.customer_name,
-      phone: details.phone,
-      delivery_method: details.delivery_method,
-      delivery_address: details.delivery_method === "delivery" ? details.delivery_address : null,
-      order_type: "menu_item",
-      items_requested: lines.map((l) => `${l.quantity}x ${l.productName}`).join(", "),
-      occasion: details.occasion || null,
-      needed_by: details.needed_by || null,
-      notes: details.notes || null,
-      payment_method: details.payment_method,
-      subtotal_bd: subtotal,
-    });
+      const { error: orderError } = await supabase.from("orders").insert({
+        id: orderId,
+        customer_name: details.customer_name,
+        phone: details.phone,
+        delivery_method: details.delivery_method,
+        delivery_address: details.delivery_method === "delivery" ? details.delivery_address : null,
+        order_type: "menu_item",
+        items_requested: lines.map((l) => `${l.quantity}x ${l.productName}`).join(", "),
+        occasion: details.occasion || null,
+        needed_by: details.needed_by || null,
+        notes: details.notes || null,
+        payment_method: details.payment_method,
+        subtotal_bd: subtotal,
+      });
 
-    if (orderError) {
+      if (orderError) {
+        setStatus("error");
+        setErrorMessage(`Order didn't save: ${orderError.message}`);
+        return;
+      }
+
+      const orderItemsPayload = lines.map((line) => ({
+        order_id: orderId,
+        product_id: line.productId,
+        product_name: line.productName,
+        quantity: line.quantity,
+        unit_price_bd: cartLineUnitPrice(line),
+        line_total_bd: cartLineTotal(line),
+        selected_options: line.selectedOptions,
+      }));
+
+      const { error: itemsError } = await supabase.from("order_items").insert(orderItemsPayload);
+
+      if (itemsError) {
+        setStatus("error");
+        setErrorMessage(`Order saved but items didn't: ${itemsError.message}`);
+        return;
+      }
+
+      setWhatsappLink(`${whatsappUrl}?text=${encodeURIComponent(buildWhatsAppMessage())}`);
+      setStatus("success");
+      clearCart();
+    } catch (err) {
       setStatus("error");
-      setErrorMessage("Something went wrong sending your order. Please try WhatsApp instead.");
-      return;
+      setErrorMessage(`Unexpected error: ${err instanceof Error ? err.message : String(err)}`);
     }
-
-    const orderItemsPayload = lines.map((line) => ({
-      order_id: orderId,
-      product_id: line.productId,
-      product_name: line.productName,
-      quantity: line.quantity,
-      unit_price_bd: cartLineUnitPrice(line),
-      line_total_bd: cartLineTotal(line),
-      selected_options: line.selectedOptions,
-    }));
-
-    const { error: itemsError } = await supabase.from("order_items").insert(orderItemsPayload);
-
-    if (itemsError) {
-      setStatus("error");
-      setErrorMessage("Your order was started but the items didn't save. Please confirm via WhatsApp instead.");
-      return;
-    }
-
-    setWhatsappLink(`${whatsappUrl}?text=${encodeURIComponent(buildWhatsAppMessage())}`);
-    setStatus("success");
-    clearCart();
   }
 
   if (status === "success") {
