@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { supabase, type OrderInsert } from "../lib/supabase";
 import { whatsappUrl } from "../data/site";
 
@@ -204,6 +205,12 @@ export function OrderForm() {
       {status === "error" && errorMessage ? (
         <p className="order-form-error">{errorMessage}</p>
       ) : null}
+
+      <p className="order-form-consent">
+        By sending this request you agree to our{" "}
+        <Link to="/policies">privacy, terms &amp; refund policy</Link>. We
+        only use your details to prepare and deliver your order.
+      </p>
 
       <button type="submit" className="button button-primary" disabled={status === "submitting"}>
         {status === "submitting" ? "Sending..." : "Send order request"}

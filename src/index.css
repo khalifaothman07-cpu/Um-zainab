@@ -3367,3 +3367,62 @@ main {
   font-size: 0.78rem;
   color: var(--ink-muted);
 }
+
+/* ============================================================
+   Added: policies page
+   ============================================================ */
+.policies-page {
+  max-width: 720px;
+}
+
+.policies-intro {
+  color: var(--ink-muted);
+  margin-bottom: 2rem;
+}
+
+.policy-section {
+  margin-bottom: 2rem;
+}
+
+.policy-section h2 {
+  font-size: 1.15rem;
+  color: var(--chocolate);
+  margin-bottom: 0.6rem;
+}
+
+.policy-section ul {
+  padding-left: 1.2rem;
+}
+
+.policy-section li {
+  margin-bottom: 0.4rem;
+}
+
+.policy-placeholder {
+  background: #fff4e0;
+  border: 1px dashed var(--gold);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+}
+
+.policies-contact {
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+}
+
+.footer-policies-link {
+  font-size: 0.85rem;
+  color: inherit;
+  opacity: 0.85;
+}
+
+/* ============================================================
+   Added: order form consent note
+   ============================================================ */
+.order-form-consent {
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  margin: 1rem 0 0.75rem;
+}

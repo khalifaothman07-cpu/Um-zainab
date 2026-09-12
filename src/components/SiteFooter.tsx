@@ -43,6 +43,9 @@ export function SiteFooter() {
       </div>
       <div className="section-shell footer-bottom">
         <p>© {new Date().getFullYear()} Um Zainab Confectionery</p>
+        <Link to="/policies" className="footer-policies-link">
+          Privacy, Terms &amp; Refunds
+        </Link>
         <p>Small batch · Made to order · Made with love</p>
       </div>
     </footer>

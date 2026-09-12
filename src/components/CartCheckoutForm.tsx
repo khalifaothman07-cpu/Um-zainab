@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart, cartLineUnitPrice, cartLineTotal } from "../lib/cart";
 import { supabase, formatBD, FREE_DELIVERY_THRESHOLD_BD, DELIVERY_FEE_BD, MINIMUM_ORDER_BD } from "../lib/supabase";
 import { whatsappUrl } from "../data/site";
@@ -272,6 +272,12 @@ export function CartCheckoutForm() {
       ) : null}
 
       {status === "error" && errorMessage ? <p className="order-form-error">{errorMessage}</p> : null}
+
+      <p className="order-form-consent">
+        By placing this order you agree to our{" "}
+        <Link to="/policies">privacy, terms &amp; refund policy</Link>. We
+        only use your details to prepare and deliver your order.
+      </p>
 
       <button type="submit" className="button button-primary" disabled={status === "submitting" || !meetsMinimum}>
         {status === "submitting" ? "Sending..." : `Place order — ${formatBD(total)}`}

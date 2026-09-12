@@ -12,6 +12,7 @@ import { CartPage } from "./pages/CartPage";
 import { Occasions } from "./pages/Occasions";
 import { Contact } from "./pages/Contact";
 import { Admin } from "./pages/Admin";
+import { Policies } from "./pages/Policies";
 import { NotFound } from "./pages/NotFound";
 
 const pageTitles: Record<string, string> = {
@@ -21,6 +22,7 @@ const pageTitles: Record<string, string> = {
   "/cart": "Your Cart | Um Zainab Confectionery",
   "/occasions": "Gifts & Occasions | Um Zainab Confectionery",
   "/contact": "Order in Bahrain | Um Zainab Confectionery",
+  "/policies": "Privacy, Terms & Refunds | Um Zainab Confectionery",
   "/admin": "Order Dashboard | Um Zainab Confectionery",
 };
 
@@ -52,6 +54,7 @@ export default function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/occasions" element={<Occasions />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/policies" element={<Policies />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
