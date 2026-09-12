@@ -8,7 +8,12 @@ import { instagramUrl, whatsappUrl } from "../data/site";
 export function Contact() {
   const { lines } = useCart();
   const [showCustomForm, setShowCustomForm] = useState(false);
-  const hasCartItems = lines.length > 0;
+  // Frozen on mount, not reactive: if this starts true (cart had items when
+  // the page loaded), it stays true even after a successful checkout clears
+  // the cart. Otherwise a successful submission's own clearCart() call would
+  // flip this false mid-flow and swap the checkout form out for the
+  // free-text fallback before its "thank you" screen ever renders.
+  const [hasCartItems] = useState(() => lines.length > 0);
 
   return (
     <main id="main-content">
