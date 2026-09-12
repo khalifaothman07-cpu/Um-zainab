@@ -81,32 +81,31 @@ export function CartCheckoutForm() {
     setStatus("submitting");
     setErrorMessage(null);
 
-    const { data: orderData, error: orderError } = await supabase
-      .from("orders")
-      .insert({
-        customer_name: details.customer_name,
-        phone: details.phone,
-        delivery_method: details.delivery_method,
-        delivery_address: details.delivery_method === "delivery" ? details.delivery_address : null,
-        order_type: "menu_item",
-        items_requested: lines.map((l) => `${l.quantity}x ${l.productName}`).join(", "),
-        occasion: details.occasion || null,
-        needed_by: details.needed_by || null,
-        notes: details.notes || null,
-        payment_method: details.payment_method,
-        subtotal_bd: subtotal,
-      })
-      .select("id")
-      .single();
+    const orderId = crypto.randomUUID();
 
-    if (orderError || !orderData) {
+    const { error: orderError } = await supabase.from("orders").insert({
+      id: orderId,
+      customer_name: details.customer_name,
+      phone: details.phone,
+      delivery_method: details.delivery_method,
+      delivery_address: details.delivery_method === "delivery" ? details.delivery_address : null,
+      order_type: "menu_item",
+      items_requested: lines.map((l) => `${l.quantity}x ${l.productName}`).join(", "),
+      occasion: details.occasion || null,
+      needed_by: details.needed_by || null,
+      notes: details.notes || null,
+      payment_method: details.payment_method,
+      subtotal_bd: subtotal,
+    });
+
+    if (orderError) {
       setStatus("error");
       setErrorMessage("Something went wrong sending your order. Please try WhatsApp instead.");
       return;
     }
 
     const orderItemsPayload = lines.map((line) => ({
-      order_id: orderData.id,
+      order_id: orderId,
       product_id: line.productId,
       product_name: line.productName,
       quantity: line.quantity,

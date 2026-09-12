@@ -176,6 +176,7 @@ export const menuCategories: Array<{
 // slot rather than a placeholder.
 export const productPhotosBySlug: Record<string, PhotoAsset> = {
   "handcrafted-bonbons": photoAssets.bonbons,
+  "gourmet-brownies": photoAssets.brownieGiftBoxes,
   "chocolate-chunk-cookies": photoAssets.cookies,
   "classic-tiramisu": photoAssets.tiramisu,
 };
