@@ -42,7 +42,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="section-shell footer-bottom">
-        <p>© {new Date().getFullYear()} Um Zainab Confectionery</p>
+        <p>© {new Date().getFullYear()} Um Zainab Confectionery · CR 750909340</p>
         <Link to="/policies" className="footer-policies-link">
           Privacy, Terms &amp; Refunds
         </Link>
