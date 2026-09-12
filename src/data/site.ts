@@ -182,9 +182,20 @@ export const productPhotosBySlug: Record<string, PhotoAsset> = {
 };
 
 // Common box-size shortcuts shown as quick-pick buttons on the product page,
-// in addition to the free +/- stepper for custom quantities.
-export const quantityPresetsBySlug: Record<string, number[]> = {
-  "gourmet-brownies": [6, 9, 12],
+// in addition to the free +/- stepper for custom quantities. `quantity` is in
+// the product's own unit (pieces for brownies, 100g units for cookies) — the
+// label is written out separately so it reads naturally either way.
+export const quantityPresetsBySlug: Record<string, { quantity: number; label: string }[]> = {
+  "gourmet-brownies": [
+    { quantity: 6, label: "6 pieces" },
+    { quantity: 9, label: "9 pieces" },
+    { quantity: 12, label: "12 pieces" },
+  ],
+  "chocolate-chunk-cookies": [
+    { quantity: 3, label: "Half dozen (~300g)" },
+    { quantity: 6, label: "Dozen (~600g)" },
+    { quantity: 9, label: "1.5 dozen (~900g)" },
+  ],
 };
 
 export const occasions: Array<{

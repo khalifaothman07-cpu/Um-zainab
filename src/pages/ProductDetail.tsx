@@ -216,15 +216,15 @@ export function ProductDetail() {
             <div className="quantity-presets">
               {presets.map((preset) => (
                 <button
-                  key={preset}
+                  key={preset.quantity}
                   type="button"
-                  className={`quantity-preset-chip ${quantity === preset ? "is-selected" : ""}`}
-                  onClick={() => setQuantity(preset)}
+                  className={`quantity-preset-chip ${quantity === preset.quantity ? "is-selected" : ""}`}
+                  onClick={() => setQuantity(preset.quantity)}
                 >
-                  {preset} pieces
+                  {preset.label}
                 </button>
               ))}
-              <span className="quantity-preset-custom-hint">or use +/− above for a custom box size</span>
+              <span className="quantity-preset-custom-hint">or use +/− above for a custom amount</span>
             </div>
           ) : null}
 
